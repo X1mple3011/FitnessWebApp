@@ -1,0 +1,49 @@
+@model IEnumerable<th.Models.TrainingPlan>
+
+@{
+    ViewBag.Title = "Lộ trình tập luyện";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-success mb-4">Lộ trình tập luyện</h2>
+
+    <div class="row mb-4">
+        <div class="col">
+            <a href="@Url.Action("CreatePlan")" class="btn btn-success">
+                <i class="fas fa-plus"></i> Tạo lộ trình mới
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var plan in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">@plan.Name</h5>
+                        <p class="card-text">@plan.Description</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="@Url.Action("MyPlan", new { id = plan.TrainingPlanId })" class="btn btn-outline-success">
+                            Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Thêm hiệu ứng hover cho card
+            $('.card').hover(
+                function () { $(this).addClass('shadow'); },
+                function () { $(this).removeClass('shadow'); }
+            );
+        });
+    </script>
+} 

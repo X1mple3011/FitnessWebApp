@@ -1,0 +1,62 @@
+@model th.Models.TrainingDay
+
+@{
+    ViewBag.Title = "Chi tiết ngày tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-success">Ngày @Model.DayNumber</h2>
+        <a href="@Url.Action("AddExerciseToDay", "Training", new { dayId = Model.TrainingDayId })" class="btn btn-success">
+            <i class="fas fa-plus"></i> Thêm bài tập
+        </a>
+    </div>
+    @if (Model.TrainingDayExercises != null && Model.TrainingDayExercises.Any())
+    {
+        <div class="card shadow">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-success">
+                        <tr>
+                            <th style="width: 35%"><i class="fas fa-dumbbell"></i> Bài tập</th>
+                            <th style="width: 15%">Số hiệp</th>
+                            <th style="width: 15%">Số lần lặp</th>
+                            <th style="width: 15%">Nghỉ (giây)</th>
+                            <th style="width: 20%">Video</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ex in Model.TrainingDayExercises)
+                        {
+                            <tr>
+                                <td class="align-middle">
+                                    <span class="fw-bold text-success">@(ex.Exercise != null ? ex.Exercise.Name : "[Bài tập đã bị xóa]")</span>
+                                </td>
+                                <td class="align-middle">@ex.Sets</td>
+                                <td class="align-middle">@ex.Repetitions</td>
+                                <td class="align-middle">@ex.RestTime</td>
+                                <td class="align-middle">
+                                    @if (!string.IsNullOrEmpty(ex.Exercise?.VideoUrl))
+                                    {
+                                        <a href="@ex.Exercise.VideoUrl" target="_blank" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-play"></i> Xem video
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">Chưa có bài tập nào cho ngày này.</div>
+    }
+</div> 

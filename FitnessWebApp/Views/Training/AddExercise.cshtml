@@ -1,0 +1,56 @@
+@model th.Models.TrainingDayExercise
+@{
+    ViewBag.Title = "Thêm bài tập cho ngày";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var exercises = ViewBag.Exercises as IEnumerable<th.Models.Exercise>;
+}
+<div class="container mt-4">
+    <h2>Thêm bài tập cho ngày</h2>
+    @using (Html.BeginForm("AddExerciseToDay", "Training", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.TrainingDayId)
+        @Html.HiddenFor(m => m.TrainingPlanId)
+        <div class="mb-3">
+            <label>Bài tập</label>
+            @Html.DropDownListFor(m => m.ExerciseId, new SelectList(exercises, "ExerciseId", "Name"), "Chọn bài tập", new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            <label>Số sets</label>
+            @Html.TextBoxFor(m => m.Sets, new { @class = "form-control", type = "number", min = "1" })
+        </div>
+        <div class="mb-3">
+            <label>Số reps</label>
+            @Html.TextBoxFor(m => m.Repetitions, new { @class = "form-control", type = "number", min = "1" })
+        </div>
+        <div class="mb-3">
+            <label>Thời gian nghỉ (giây)</label>
+            @Html.TextBoxFor(m => m.RestTime, new { @class = "form-control", type = "number", min = "0" })
+        </div>
+        <div class="mb-3">
+            <label>Ghi chú</label>
+            @Html.TextBoxFor(m => m.Notes, new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-success">Thêm</button>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+} 

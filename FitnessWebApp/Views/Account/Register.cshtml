@@ -1,0 +1,140 @@
+@model th.Models.User
+
+@{
+    ViewBag.Title = "Đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center text-success mb-4">Đăng ký tài khoản</h3>
+
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Username" class="form-label">Tên đăng nhập</label>
+                                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập tên đăng nhập
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="Password" class="form-label">Mật khẩu</label>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập mật khẩu
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="FullName" class="form-label">Họ và tên</label>
+                                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập họ và tên
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="PhoneNumber" class="form-label">Số điện thoại</label>
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập số điện thoại
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Height" class="form-label">Chiều cao (cm)</label>
+                                @Html.TextBoxFor(m => m.Height, new { @class = "form-control", type = "number", step = "0.1", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Height, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập chiều cao
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="Weight" class="form-label">Cân nặng (kg)</label>
+                                @Html.TextBoxFor(m => m.Weight, new { @class = "form-control", type = "number", step = "0.1", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Weight, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập cân nặng
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Đăng ký</button>
+                        </div>
+                    }
+
+                    <div class="text-center mt-3">
+                        <p>Đã có tài khoản? <a href="@Url.Action("Login")" class="text-success">Đăng nhập</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+
+        // Tính BMI khi nhập chiều cao và cân nặng
+        $(document).ready(function () {
+            function calculateBMI() {
+                var height = parseFloat($('#Height').val()) / 100; // Chuyển cm sang m
+                var weight = parseFloat($('#Weight').val());
+                
+                if (height > 0 && weight > 0) {
+                    var bmi = weight / (height * height);
+                    var bmiCategory = '';
+                    
+                    if (bmi < 18.5) {
+                        bmiCategory = 'Thiếu cân';
+                    } else if (bmi < 25) {
+                        bmiCategory = 'Bình thường';
+                    } else if (bmi < 30) {
+                        bmiCategory = 'Thừa cân';
+                    } else {
+                        bmiCategory = 'Béo phì';
+                    }
+                    
+                    $('#bmiResult').text('BMI của bạn: ' + bmi.toFixed(1) + ' - ' + bmiCategory);
+                }
+            }
+
+            $('#Height, #Weight').on('input', calculateBMI);
+        });
+    </script>
+} 

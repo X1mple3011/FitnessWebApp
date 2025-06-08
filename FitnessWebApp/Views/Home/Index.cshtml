@@ -1,33 +1,176 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<div class="container mt-4">
+   
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center py-5">
+                    <h1 class="display-4">Chào mừng đến với Fitness App</h1>
+                    <p class="lead">Khám phá lộ trình tập luyện phù hợp với bạn</p>
+                    @if (Session["UserId"] == null)
+                    {
+                        <div class="mt-4">
+                            <a href="@Url.Action("Register", "Account")" class="btn btn-light btn-lg me-3">Đăng ký</a>
+                            <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light btn-lg">Đăng nhập</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mt-4">
+                            <a href="@Url.Action("MyPlan", "Training")" class="btn btn-light btn-lg">Xem lộ trình của tôi</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
-</main>
+
+   
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="mb-4">Bài tập mới nhất</h2>
+            <div class="row">
+                @if (ViewBag.LatestExercises != null)
+                {
+                    foreach (var exercise in ViewBag.LatestExercises)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(exercise.VideoUrl))
+                                {
+                                    if (exercise.VideoUrl.Contains("youtube.com") || exercise.VideoUrl.Contains("youtu.be"))
+                                    {
+                                        // Lấy thumbnail YouTube
+                                        var youtubeId = "";
+                                        var url = exercise.VideoUrl;
+                                        if (url.Contains("youtu.be/"))
+                                        {
+                                            youtubeId = url.Substring(url.LastIndexOf("/") + 1);
+                                        }
+                                        else if (url.Contains("v="))
+                                        {
+                                            var vIndex = url.IndexOf("v=") + 2;
+                                            var ampIndex = url.IndexOf("&", vIndex);
+                                            youtubeId = ampIndex > 0 ? url.Substring(vIndex, ampIndex - vIndex) : url.Substring(vIndex);
+                                        }
+                                        var thumbUrl = $"https://img.youtube.com/vi/{youtubeId}/hqdefault.jpg";
+                                        <img src="@thumbUrl" class="card-img-top" alt="YouTube thumbnail" style="object-fit:cover;height:220px;">
+                                    }
+                                    else if (exercise.VideoUrl.EndsWith(".mp4"))
+                                    {
+                                        <video class="card-img-top" controls style="object-fit:cover;height:220px;">
+                                            <source src="@exercise.VideoUrl" type="video/mp4" />
+                                            Trình duyệt của bạn không hỗ trợ video.
+                                        </video>
+                                    }
+                                    else
+                                    {
+                                        <img src="/Content/no-video.png" class="card-img-top" alt="No video" style="object-fit:cover;height:220px;">
+                                    }
+                                }
+                                else
+                                {
+                                    <img src="/Content/no-video.png" class="card-img-top" alt="No video" style="object-fit:cover;height:220px;">
+                                }
+                                <div class="card-body">
+                                    <h5 class="card-title">@exercise.Name</h5>
+                                    <p class="card-text">@exercise.Description</p>
+                                    <a href="@Url.Action("ExerciseDetails", new { id = exercise.ExerciseId })" class="btn btn-success">Xem chi tiết</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Exercises")" class="btn btn-outline-success">Xem tất cả bài tập</a>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="mb-4">Bài viết mới nhất</h2>
+            <div class="row">
+                @if (ViewBag.LatestPosts != null)
+                {
+                    foreach (var post in ViewBag.LatestPosts)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(post.ImageUrl))
+                                {
+                                    <img src="@post.ImageUrl" class="card-img-top" alt="@post.Title">
+                                }
+                                <div class="card-body">
+                                    <h5 class="card-title">@post.Title</h5>
+                                    <p class="card-text">@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">@post.CreatedAt.ToString("dd/MM/yyyy")</small>
+                                        <a href="@Url.Action("Details", "Blog", new { id = post.BlogPostId })" class="btn btn-success">Đọc tiếp</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Blog")" class="btn btn-outline-success">Xem tất cả bài viết</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="mb-4">Tính năng nổi bật</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dumbbell fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Lộ trình cá nhân</h5>
+                            <p class="card-text">Lộ trình tập luyện được thiết kế riêng dựa trên chỉ số BMI của bạn</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Theo dõi tiến độ</h5>
+                            <p class="card-text">Theo dõi và đánh giá tiến độ tập luyện của bạn</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Cộng đồng</h5>
+                            <p class="card-text">Chia sẻ kinh nghiệm và tương tác với cộng đồng</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Thêm hiệu ứng hover cho card
+            $('.card').hover(
+                function () { $(this).addClass('shadow'); },
+                function () { $(this).removeClass('shadow'); }
+            );
+        });
+    </script>
+} 

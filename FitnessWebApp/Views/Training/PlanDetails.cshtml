@@ -1,0 +1,204 @@
+@model th.Models.TrainingPlan
+
+@{
+    ViewBag.Title = "Chi tiết lộ trình";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isOwner = (Session["UserId"] != null && Model.UserId == (int)Session["UserId"]);
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6 flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-green-700">@Model.Name</h2>
+        <div>
+            <span class="badge bg-success">@Model.StartDate.ToString("dd/MM/yyyy") - @Model.EndDate.ToString("dd/MM/yyyy")</span>
+        </div>
+    </div>
+    <div class="mb-4">
+        <p class="text-gray-700">@Model.Description</p>
+    </div>
+    <h4 class="font-bold mb-3">Các ngày tập</h4>
+    @foreach (var day in Model.TrainingDays.OrderBy(d => d.DayNumber))
+    {
+        <div class="mb-4 border p-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <strong>Ngày @day.DayNumber</strong>
+                <a href="@Url.Action("AddExerciseToDay", "Training", new { dayId = day.TrainingDayId, planId = Model.TrainingPlanId })" class="btn btn-outline-success btn-sm">Thêm bài tập</a>
+                <a href="@Url.Action("DayDetails", "Training", new { dayId = day.TrainingDayId })" class="btn btn-outline-success btn-sm">Xem chi tiết</a>
+            </div>
+            <ul>
+                @if (day.TrainingDayExercises != null && day.TrainingDayExercises.Any())
+                {
+                    foreach (var ex in day.TrainingDayExercises)
+                    {
+                        <li>
+                            <div>
+                                <h6 class="mb-1">@(ex.Exercise != null ? ex.Exercise.Name : "[Bài tập đã bị xóa]")</h6>
+                                <p class="mb-1 text-muted">
+                                    <small>
+                                        <i class="fas fa-dumbbell"></i> @ex.Sets hiệp x @ex.Repetitions lần
+                                        @if (ex.RestTime > 0)
+                                        {
+                                            <span>| <i class="fas fa-clock"></i> Nghỉ @ex.RestTime giây</span>
+                                        }
+                                    </small>
+                                </p>
+                                @if (!string.IsNullOrEmpty(ex.Exercise?.VideoUrl))
+                                {
+                                    <a href="@ex.Exercise.VideoUrl" target="_blank" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-play"></i> Xem hướng dẫn
+                                    </a>
+                                }
+                            </div>
+                            @if (isOwner)
+                            {
+                                <form action="@Url.Action("DeleteExerciseFromDay", "Training", new { id = ex.TrainingDayExerciseId })" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn xóa bài tập này?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="text-muted">Chưa có bài tập nào.</li>
+                }
+            </ul>
+        </div>
+    }
+    <a href="@Url.Action("TrainingPlans", "Home")" class="btn btn-outline-secondary mt-3">Quay lại danh sách lộ trình</a>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title text-success">@Model.Name</h3>
+                    <p class="text-muted">
+                        <i class="fas fa-calendar"></i> @Model.StartDate.ToString("dd/MM/yyyy") - @Model.EndDate.ToString("dd/MM/yyyy")
+                    </p>
+                    <p class="card-text">@Model.Description</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Danh sách bài tập</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TrainingDays != null && Model.TrainingDays.Any())
+                    {
+                        foreach (var day in Model.TrainingDays.OrderBy(d => d.DayNumber))
+                        {
+                            <div class="mb-4">
+                                <h5 class="text-success">Ngày @day.DayNumber</h5>
+                                <div class="list-group">
+                                    @if (day.TrainingDayExercises != null && day.TrainingDayExercises.Any())
+                                    {
+                                        foreach (var ex in day.TrainingDayExercises)
+                                        {
+                                            <div class="list-group-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">@(ex.Exercise != null ? ex.Exercise.Name : "[Bài tập đã bị xóa]")</h6>
+                                                        <p class="mb-1 text-muted">
+                                                            <small>
+                                                                <i class="fas fa-dumbbell"></i> @ex.Sets hiệp x @ex.Repetitions lần
+                                                                @if (ex.RestTime > 0)
+                                                                {
+                                                                    <span>| <i class="fas fa-clock"></i> Nghỉ @ex.RestTime giây</span>
+                                                                }
+                                                            </small>
+                                                        </p>
+                                                        @if (!string.IsNullOrEmpty(ex.Exercise?.VideoUrl))
+                                                        {
+                                                            <a href="@ex.Exercise.VideoUrl" target="_blank" class="btn btn-sm btn-outline-success">
+                                                                <i class="fas fa-play"></i> Xem hướng dẫn
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                    <div>
+                                                        @if (isOwner)
+                                                        {
+                                                            <form action="@Url.Action("DeleteExerciseFromDay", "Training", new { id = ex.TrainingDayExerciseId })" method="post" style="display:inline">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn xóa bài tập này?')">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="list-group-item text-muted">Chưa có bài tập nào.</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted">
+                            <p>Chưa có bài tập nào trong lộ trình này.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Thông tin lộ trình</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Tổng số ngày
+                            <span class="badge bg-success rounded-pill">@((Model.TrainingDays != null ? Model.TrainingDays.Count : 0))</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Tổng số bài tập
+                            <span class="badge bg-success rounded-pill">
+                                @(Model.TrainingDays?.Sum(d => d.TrainingDayExercises != null ? d.TrainingDayExercises.Count : 0) ?? 0)
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Thời gian thực hiện
+                            <span class="badge bg-success rounded-pill">@((Model.EndDate - Model.StartDate).Days + 1) ngày</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Hướng dẫn</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success"></i> Thực hiện các bài tập theo thứ tự
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success"></i> Tuân thủ thời gian nghỉ giữa các hiệp
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success"></i> Xem video hướng dẫn trước khi tập
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle text-success"></i> Ghi chú lại tiến độ của bạn
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
