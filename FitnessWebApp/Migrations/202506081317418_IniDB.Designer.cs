@@ -13,7 +13,7 @@ namespace FitnessWebApp.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202506071303211_IniDB"; }
+            get { return "202506081317418_IniDB"; }
         }
         
         string IMigrationMetadata.Source
