@@ -1,9 +1,9 @@
-﻿using FitnessWebApp.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using FitnessWebApp.Models;
+using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace FitnessWebApp.Controllers
 {
