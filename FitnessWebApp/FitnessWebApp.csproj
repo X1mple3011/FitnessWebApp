@@ -131,9 +131,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202506071303211_IniDB.cs" />
-    <Compile Include="Migrations\202506071303211_IniDB.Designer.cs">
-      <DependentUpon>202506071303211_IniDB.cs</DependentUpon>
+    <Compile Include="Migrations\202506081317418_IniDB.cs" />
+    <Compile Include="Migrations\202506081317418_IniDB.Designer.cs">
+      <DependentUpon>202506081317418_IniDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppDbContext.cs" />
@@ -232,8 +232,8 @@
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202506071303211_IniDB.resx">
-      <DependentUpon>202506071303211_IniDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202506081317418_IniDB.resx">
+      <DependentUpon>202506081317418_IniDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
