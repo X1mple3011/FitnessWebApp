@@ -1,23 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FitnessWebApp.Models
 {
     public class BlogComment
     {
-        public int BlogCommentId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CommentId { get; set; }
+
+        [Required(ErrorMessage = "Nội dung bình luận không được để trống")]
+        [StringLength(1000, ErrorMessage = "Nội dung bình luận không được vượt quá 1000 ký tự")]
         public string Content { get; set; }
+
+        [Required]
         public DateTime CreatedAt { get; set; }
+
         public int BlogPostId { get; set; }
         [ForeignKey("BlogPostId")]
-        [InverseProperty("BlogComments")]
         public virtual BlogPost BlogPost { get; set; }
+
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        [InverseProperty("BlogComments")]
         public virtual User User { get; set; }
     }
 }

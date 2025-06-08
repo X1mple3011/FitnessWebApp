@@ -128,25 +128,25 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202506020918504_InitDB.cs" />
-    <Compile Include="Migrations\202506020918504_InitDB.Designer.cs">
-      <DependentUpon>202506020918504_InitDB.cs</DependentUpon>
+    <Compile Include="Migrations\202506071303211_IniDB.cs" />
+    <Compile Include="Migrations\202506071303211_IniDB.Designer.cs">
+      <DependentUpon>202506071303211_IniDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AppDbContext.cs" />
     <Compile Include="Models\BlogComment.cs" />
     <Compile Include="Models\BlogLike.cs" />
     <Compile Include="Models\BlogPost.cs" />
-    <Compile Include="Models\ChisoBMI.cs" />
     <Compile Include="Models\Exercise.cs" />
-    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\TrainingDay.cs" />
+    <Compile Include="Models\TrainingDayExercise.cs" />
     <Compile Include="Models\TrainingPlan.cs" />
-    <Compile Include="Models\TrainingPlanExercise.cs" />
+    <Compile Include="Models\TrainingPlanRegistration.cs" />
+    <Compile Include="Models\TrainingProgress.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserTrainingPlan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -232,8 +232,8 @@
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202506020918504_InitDB.resx">
-      <DependentUpon>202506020918504_InitDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202506071303211_IniDB.resx">
+      <DependentUpon>202506071303211_IniDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

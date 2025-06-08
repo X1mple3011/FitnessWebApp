@@ -7,13 +7,13 @@ namespace FitnessWebApp.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class InitDB : IMigrationMetadata
+    public sealed partial class IniDB : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitDB));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(IniDB));
         
         string IMigrationMetadata.Id
         {
-            get { return "202506020918504_InitDB"; }
+            get { return "202506071303211_IniDB"; }
         }
         
         string IMigrationMetadata.Source

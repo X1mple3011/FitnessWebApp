@@ -1,35 +1,40 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FitnessWebApp.Models
 {
-
     public class User
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public int RoleId { get; set; }
-        public virtual Role Role { get; set; }
-        public double Height { get; set; }
-        public double Weight { get; set; }
-        public double BMI { get; set; }
-        [InverseProperty("User")]
-        public virtual ICollection<UserTrainingPlan> UserTrainingPlans { get; set; }
-        [InverseProperty("User")]
+
+        [Required]
+        [StringLength(50)]
+        public string Username { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string FullName { get; set; }
+
+        [StringLength(20)]
+        public string PhoneNumber { get; set; }
+
+        public decimal? Height { get; set; } // Chiều cao (cm)
+
+        public decimal? Weight { get; set; } // Cân nặng (kg)
+
+        // Navigation properties
+        public virtual ICollection<TrainingPlan> TrainingPlans { get; set; }
         public virtual ICollection<BlogPost> BlogPosts { get; set; }
-        [InverseProperty("User")]
         public virtual ICollection<BlogComment> BlogComments { get; set; }
-        [InverseProperty("User")]
         public virtual ICollection<BlogLike> BlogLikes { get; set; }
-        [InverseProperty("User")]
-        public virtual ICollection<ChiSoBMI> ChiSoBMIs { get; set; }
     }
-
-} 
-
-
+}
