@@ -1,0 +1,225 @@
+@model th.Models.TrainingPlan
+
+@{
+    ViewBag.Title = "Tạo lộ trình mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center text-success mb-4">Tạo lộ trình mới</h3>
+
+                    @using (Html.BeginForm("CreatePlan", "Training", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate", id = "createPlanForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="mb-4">
+                            <label for="Name" class="form-label">Tên lộ trình</label>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control form-control-lg", required = "required", maxlength = "100" })
+                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            <div class="invalid-feedback">
+                                Vui lòng nhập tên lộ trình
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="Description" class="form-label">Mô tả</label>
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control form-control-lg", rows = "4", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                            <div class="invalid-feedback">
+                                Vui lòng nhập mô tả
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="StartDate" class="form-label">Ngày bắt đầu</label>
+                                @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control form-control-lg", type = "date", required = "required" })
+                                @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng chọn ngày bắt đầu
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="EndDate" class="form-label">Ngày kết thúc</label>
+                                @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control form-control-lg", type = "date", required = "required" })
+                                @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })
+                                <div class="invalid-feedback">
+                                    Vui lòng chọn ngày kết thúc
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-success btn-lg" onclick="return confirmCreate()">Tạo lộ trình</button>
+                            <a href="@Url.Action("MyPlan")" class="btn btn-outline-secondary btn-lg">Quay lại</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.TrainingDays != null && Model.TrainingDays.Any())
+{
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="text-success mb-4">Danh sách bài tập</h4>
+                <div class="accordion" id="trainingDaysAccordion">
+                    @foreach (var day in Model.TrainingDays)
+                    {
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading@(day.DayNumber)">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(day.DayNumber)">
+                                    Ngày @day.DayNumber
+                                </button>
+                            </h2>
+                            <div id="collapse@(day.DayNumber)" class="accordion-collapse collapse" data-bs-parent="#trainingDaysAccordion">
+                                <div class="accordion-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="mb-0">Bài tập</h5>
+                                        <a href="@Url.Action("AddExerciseToDay", new { dayId = day.TrainingDayId })" class="btn btn-success">
+                                            <i class="fas fa-plus"></i> Thêm bài tập
+                                        </a>
+                                    </div>
+                                    @if (day.TrainingDayExercises != null && day.TrainingDayExercises.Any())
+                                    {
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 40%">Bài tập</th>
+                                                    <th style="width: 15%">Số hiệp</th>
+                                                    <th style="width: 15%">Số lần lặp</th>
+                                                    <th style="width: 15%">Thời gian nghỉ</th>
+                                                    <th style="width: 15%">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var ex in day.TrainingDayExercises)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @(ex.Exercise != null ? ex.Exercise.Name : "[Bài tập đã bị xóa]")
+                                                            @if (!string.IsNullOrEmpty(ex.Exercise?.VideoUrl))
+                                                            {
+                                                                <a href="@ex.Exercise.VideoUrl" target="_blank" class="ms-2">
+                                                                    <i class="fas fa-video text-primary"></i>
+                                                                </a>
+                                                            }
+                                                        </td>
+                                                        <td>@ex.Sets</td>
+                                                        <td>@ex.Repetitions</td>
+                                                        <td>@ex.RestTime giây</td>
+                                                        <td>
+                                                            <button class="btn btn-danger" onclick="confirmDeleteExercise(@ex.TrainingDayExerciseId)">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info">
+                                            Chưa có bài tập nào cho ngày này
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+
+        // Kiểm tra ngày kết thúc phải sau ngày bắt đầu
+        $(document).ready(function () {
+            $('#StartDate, #EndDate').on('change', function () {
+                var startDate = new Date($('#StartDate').val());
+                var endDate = new Date($('#EndDate').val());
+
+                if (endDate < startDate) {
+                    $('#EndDate').val('');
+                    showError('Ngày kết thúc phải sau ngày bắt đầu');
+                }
+            });
+        });
+
+        // Xác nhận tạo lộ trình
+        function confirmCreate() {
+            if (!$('#createPlanForm')[0].checkValidity()) {
+                return false;
+            }
+            var startDate = new Date($('#StartDate').val());
+            var endDate = new Date($('#EndDate').val());
+            if (endDate < startDate) {
+                showError('Ngày kết thúc phải sau ngày bắt đầu');
+                return false;
+            }
+            // Sử dụng SweetAlert xác nhận tạo lộ trình
+            event.preventDefault();
+            Swal.fire({
+                title: 'Xác nhận tạo lộ trình?',
+                text: 'Bạn có chắc chắn muốn tạo lộ trình này?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Tạo',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#createPlanForm')[0].submit();
+                }
+            });
+            return false;
+        }
+
+        // Xác nhận xóa bài tập
+        function confirmDeleteExercise(id) {
+            confirmDelete('Bạn có chắc chắn muốn xóa bài tập này?').then((result) => {
+                if (result.isConfirmed) {
+                    showLoading();
+                    $.post('@Url.Action("DeleteExerciseFromDay", "Training")', { id: id })
+                        .done(function () {
+                            location.reload();
+                        })
+                        .fail(function () {
+                            hideLoading();
+                            showError('Có lỗi xảy ra khi xóa bài tập');
+                        });
+                }
+            });
+        }
+    </script>
+} 

@@ -1,0 +1,55 @@
+@model IEnumerable<th.Models.BlogPost>
+
+@{
+    ViewBag.Title = "Blog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Blog</h2>
+        @if (Session["UserId"] != null)
+        {
+            <a href="@Url.Action("Create")" class="btn btn-success">
+                <i class="fas fa-plus"></i> Tạo bài viết mới
+            </a>
+        }
+    </div>
+
+    <div class="row">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(post.ImageUrl))
+                    {
+                        <img src="@post.ImageUrl" class="card-img-top" alt="@post.Title">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text">@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-user"></i> @post.User.FullName<br />
+                                <i class="fas fa-calendar"></i> @post.CreatedAt.ToString("dd/MM/yyyy")
+                            </small>
+                            <div>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-heart"></i> @post.Likes.Count
+                                </span>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-comments"></i> @post.Comments.Count
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="@Url.Action("Details", new { id = post.BlogPostId })" class="btn btn-success w-100">
+                            Đọc tiếp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div> 

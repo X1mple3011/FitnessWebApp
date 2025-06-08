@@ -1,0 +1,28 @@
+@model th.Models.Exercise
+@{
+    ViewBag.Title = "Chi tiết bài tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container mt-4">
+    <h2>Chi tiết bài tập</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Tên bài tập</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+        <dt class="col-sm-3">Mô tả</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+        <dt class="col-sm-3">Video hướng dẫn</dt>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.VideoUrl))
+            {
+                <a href="@Model.VideoUrl" target="_blank">Xem video</a>
+            }
+            else
+            {
+                <span class="text-muted">Không có</span>
+            }
+        </dd>
+    </dl>
+    <a href="@Url.Action("Edit", new { id = Model.ExerciseId })" class="btn btn-warning">Sửa</a>
+    <a href="@Url.Action("Delete", new { id = Model.ExerciseId })" class="btn btn-danger">Xóa</a>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Quay lại</a>
+</div> 

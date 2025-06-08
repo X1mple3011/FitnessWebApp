@@ -1,0 +1,132 @@
+@model th.Models.BlogPost
+
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title">
+                }
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-user"></i> @Model.User.FullName<br />
+                            <i class="fas fa-calendar"></i> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                        </small>
+                        <div>
+                            <span class="badge bg-success">
+                                <i class="fas fa-heart"></i> @Model.Likes.Count
+                            </span>
+                            <span class="badge bg-info">
+                                <i class="fas fa-comments"></i> @Model.Comments.Count
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-text">
+                        @Html.Raw(Model.Content.Replace("\n", "<br />"))
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    @if (Session["UserId"] != null)
+                    {
+                        using (Html.BeginForm("Like", "Blog", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.BlogPostId" />
+                            <button type="submit" class="btn btn-outline-success">
+                                <i class="fas fa-heart"></i> 
+                                @(Model.Likes.Any(l => l.UserId == (int)Session["UserId"]) ? "Bỏ thích" : "Thích")
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Bình luận (@Model.Comments.Count)</h5>
+                </div>
+                <div class="card-body">
+                    @if (Session["UserId"] != null)
+                    {
+                        using (Html.BeginForm("Comment", "Blog", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="BlogPostId" value="@Model.BlogPostId" />
+                            <div class="mb-3">
+                                <textarea name="Content" class="form-control" rows="3" placeholder="Viết bình luận của bạn..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Gửi bình luận</button>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Vui lòng <a href="@Url.Action("Login", "Account")">đăng nhập</a> để bình luận.
+                        </div>
+                    }
+
+                    <hr />
+
+                    @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-user-circle fa-2x text-success"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">@comment.User.FullName</h6>
+                                    <p class="mb-1">@comment.Content</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i> @comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Bài viết liên quan</h5>
+                </div>
+                <div class="card-body">
+                    @{
+                        var relatedPosts = ViewBag.RelatedPosts as IEnumerable<th.Models.BlogPost>;
+                        if (relatedPosts != null && relatedPosts.Any())
+                        {
+                            foreach (var post in relatedPosts)
+                            {
+                                <div class="mb-3">
+                                    <h6>
+                                        <a href="@Url.Action("Details", new { id = post.BlogPostId })" class="text-success">
+                                            @post.Title
+                                        </a>
+                                    </h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar"></i> @post.CreatedAt.ToString("dd/MM/yyyy")
+                                    </small>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">Không có bài viết liên quan.</p>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

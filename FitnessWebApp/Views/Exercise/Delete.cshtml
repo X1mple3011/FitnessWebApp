@@ -1,0 +1,16 @@
+@model th.Models.Exercise
+@{
+    ViewBag.Title = "Xóa bài tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container mt-4">
+    <h2>Xóa bài tập</h2>
+    <div class="alert alert-danger">Bạn có chắc chắn muốn xóa bài tập <strong>@Model.Name</strong>?</div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.ExerciseId)
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+    }
+</div> 

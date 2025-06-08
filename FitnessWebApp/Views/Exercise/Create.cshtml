@@ -1,0 +1,26 @@
+@model th.Models.Exercise
+@{
+    ViewBag.Title = "Thêm bài tập mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container mt-4">
+    <h2>Thêm bài tập mới</h2>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label>Tên bài tập</label>
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            <label>Mô tả</label>
+            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 3 })
+        </div>
+        <div class="mb-3">
+            <label>Video hướng dẫn (URL)</label>
+            @Html.TextBoxFor(m => m.VideoUrl, new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-success">Thêm</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Quay lại</a>
+    }
+</div> 

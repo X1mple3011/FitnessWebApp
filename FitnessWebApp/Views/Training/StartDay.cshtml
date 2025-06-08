@@ -1,0 +1,30 @@
+@model th.Models.TrainingDay
+
+@{
+    ViewBag.Title = "Ngày tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Ngày @Model.DayNumber</h2>
+    @if (Model.TrainingDayExercises != null && Model.TrainingDayExercises.Any())
+    {
+        <ul>
+            @foreach (var ex in Model.TrainingDayExercises)
+            {
+                <li>
+                    <b>@(ex.Exercise != null ? ex.Exercise.Name : "[Bài tập đã bị xóa]")</b> - @ex.Sets hiệp x @ex.Repetitions lần
+                    @if (!string.IsNullOrEmpty(ex.Exercise?.VideoUrl))
+                    {
+                        <a href="@ex.Exercise.VideoUrl" target="_blank">Xem video</a>
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <div class="text-muted">Chưa có bài tập nào.</div>
+    }
+    <a href="@Url.Action("AddExerciseToDay", "Training", new { dayId = Model.TrainingDayId })" class="btn btn-success mt-3">Thêm bài tập</a>
+</div> 
